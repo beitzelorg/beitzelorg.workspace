@@ -6,9 +6,10 @@ tags:
 - F#
 - Accord.NET
 - Computer Vision
+- Images
 ---
 
-This is a quick experiment using [F#](http://fsharp.org/) and [Accord.NET](http://accord-framework.net/) to do face detection.  The method uses the provided Haar-like feature detection.  The results aren't particularly good, but for little effort it's an ok start.  At a minimum, it does reasonably well at detecting potential regions of interest.  For the test images, the best improvements were found when constraining the min/max range based on the known sizes of faces in the pictures.
+This is a quick sample using [F#](http://fsharp.org/) and [Accord.NET](http://accord-framework.net/) to do face detection.  The method uses the provided Haar-like feature detection.  The results aren't particularly good, but for little effort it's an ok start.  At a minimum, it does reasonably well at detecting potential regions of interest.  For the test images, the best improvements were found when constraining the min/max range based on the known sizes of faces in the pictures.
 
 Using [Paket](https://github.com/fsprojects/Paket), here is a sample ```paket.dependencies``` file.
 
