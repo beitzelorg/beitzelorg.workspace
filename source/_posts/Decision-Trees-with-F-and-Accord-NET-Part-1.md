@@ -12,7 +12,10 @@ tags:
 
 It is time for an exploration into using a Decision Tree to classify Lego set themes using [F#](http://fsharp.org/) and [Accord.NET](http://accord-framework.net/).  
 
-First things first, the data. [Rebrickable](http://rebrickable.com/downloads) has downloadable datasets for Lego sets and pieces.  I'll use the ```sets.csv``` file as the primary dataset driver, but will grab information from ```sets_pieces.csv```, ```pieces.csv```, and ```colors.csv``` for feature creation.  The files are not in an format appropriate for a decision tree, so some transformations will need to happen first.  I don't want the post to get too long, so this project will be broken into two components.  Part 1 will be building the feature file and getting the data into the desired comsumable format, part 2 will actually use the file to get to the end goal.
+First things first, the data. [Rebrickable](http://rebrickable.com/downloads) has downloadable datasets for Lego sets and pieces.  I'll use the ```sets.csv``` file as the primary dataset driver, but will grab information from ```sets_pieces.csv```, ```pieces.csv```, and ```colors.csv``` for feature creation.  The files are not in an format appropriate for a decision tree, so some transformations will need to happen first.  I don't want the post to get too long, so this project will be broken into two components.  Part 1 will be building the feature file and getting the data into the desired comsumable format, [Part 2](/2016/12/07/Decision-Trees-with-F-and-Accord-NET-Part-2) will actually use the file to get to the end goal.
+
+Second, the approach.  The goal of part 1 is to do all transformations here.  I want the end result to be a file that can be directly loaded into part 2's code.  I will use/create a series of features.  Year is the set's year, and is directly provided.  The following features will need to be grouped and calculated.  First is "% of the set's pieces are <x> type" for a couple major piece types.  Second, is "% of the set's pieces are <x> color" for major color groups.  Lastly, the prediction target is theme.  The dataset has up to three themes per set (T1, T2, T3).  For simplicity sake I am only going to use one theme (T1) as the target theme to predict.  This will restrict the quality of my results, but as a proof-of-concept it will be good enough.  Hopefully all this give me some interesting results.
+
 
 Using [Paket](https://github.com/fsprojects/Paket), here is a sample ```paket.dependencies``` file.
 
@@ -108,8 +111,11 @@ type SetDetail = {
     BlackPct: float;
     GrayPct: float;
     SilverPct: float;
-    TranslucentPct: float}
-
+    TranslucentPct: float} with
+    static member toCsv d =
+        sprintf "%d,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f" 
+            d.ThemeId d.Year d.PiecesCount d.BricksPct d.PlatesPct d.MinifigsPct d.PanelsPct d.PlantsAndAnimalsPct d.TilesPct d.TechnicsPct d.RedPct d.GreenPct d.BluePct d.WhitePct d.BlackPct d.GrayPct d.SilverPct d.TranslucentPct
+    
 // Sum counts for SetCountsDetail (use in fold)
 let setCountsDetailSum (a:SetCountsDetail) (b:SetCountsDetail) = 
     {a with 
@@ -221,8 +227,6 @@ let themesLookup =
 
 All the hard work is done.  I now just take the data from the file and run it through a series of filters and transformations to transpose the bricktype and piece color counts into "percent of the set" columns.  Once that is done I write out a file ```aggregatedata.csv``` that will be used in Part 2.  I also save a themes lookup file.  The lookup isn't actually needed for the decision tree processing, but its a nice-to-have if I want to remap the int ids back to text values for evaluation.
 
-One thing I glossed over was the themes themselves, this seems like an important point.  If you look at the raw file you may notice each set has up to three themes (T1, T2, T3). For this quick test I decided to use just one theme (T1) ```ThemeId = themesLookup.Item row.T1;```.  It's a simple interpretation and will restrict the quality of the results, but good enough for a quick test.
-
 {% codeblock lang:fsharp %}
 // Build dataset
 let dataset = 
@@ -276,8 +280,8 @@ let dataFile = List.Cons (
     "ThemeId,Year,PiecesCount,BricksPct,PlatesPct,MinifigsPct,PanelsPct,PlantsAndAnimalsPct,TilesPct,TechnicsCount,RedPct,GreenPct,BluePct,WhitePct,BlackPct,GrayPct,SilverPct,TranslucentPct", 
     dataset
     |> Seq.toList
-    |> List.map (fun r -> sprintf "%d,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f" r.ThemeId r.Year r.PiecesCount r.BricksPct r.PlatesPct r.MinifigsPct r.PanelsPct r.PlantsAndAnimalsPct r.TilesPct r.TechnicsPct r.RedPct r.GreenPct r.BluePct r.WhitePct r.BlackPct r.GrayPct r.SilverPct r.TranslucentPct))
-
+    |> List.map SetDetail.toCsv)
+	
 File.WriteAllLines(Path.Combine(__SOURCE_DIRECTORY__, @"..\\data\\legos\\aggregatedata.csv"), dataFile)
 
 
