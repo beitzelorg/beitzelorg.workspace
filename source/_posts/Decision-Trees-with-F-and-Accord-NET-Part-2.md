@@ -199,10 +199,56 @@ showResults "Train" trainTotalCorrect (Array.length trainInputs)
 showResults "Test " testTotalCorrect (Array.length testInputs)
 {% endcodeblock %}
 
-Below are the results.  They are disappointing, and there is certainly room for improvement.  But its a start. Hopefully this has offered some insight into how to use a decision tree in Accord.NET.  Until next time...
+Below are the results.  They are disappointing, and there is certainly room for improvement.  But its a start. 
 
 ```
 Train - Direct row match  : Correct 5624/7584 (0.742)
 Test  - Direct row match  : Correct 1342/3250 (0.413)
 ```
+
+On a whim I attempt to use the ID3 learner instead.  This method requires discrete values.  It's easy enough to convert all the doubles to ints.  Knowing that most of my columns are percentages, I multiple by 100, then convert to an int.  Unfortunantly, my system ran out of memory on this test.  I used fsharpi (Mono) as well as fsi (.NET CLR), but it gave me the same issue.  This deserves some additional follow-up, but I don't have time for that rabbit-hole right now.  Below is the code I used to try the ID3 learner, if someone sees what is wrong, feel free to drop me a line.
+
+{% codeblock lang:fsharp %}
+
+// Below is the hacked up ID3 variant of my test
+
+let newRangeFromColumnInt (d:int[][]) (i:int) = 
+    new IntRange(
+        d |> Array.map (fun r -> r.[i]) |> Array.min,
+        d |> Array.map (fun r -> r.[i]) |> Array.max)
+
+let newDecisionVariableFromColumnInt (d:int[][]) (i:int) =
+    new DecisionVariable((sprintf "col%d" i), newRangeFromColumnInt d i)
+
+let decisionVariablesInt (inputs:int[][]) = 
+    [0..(Array.length inputs.[0])-1] 
+    |> List.map (newDecisionVariableFromColumnInt inputs)
+
+let decisionVariablesIListInt (inputs:int[][]) = 
+    let variableList = new Collections.Generic.List<DecisionVariable>()
+    decisionVariablesInt inputs |> List.iter (fun x -> variableList.Add(x))
+    variableList
+
+let inputsInt i = 
+    (Array.map (fun x -> Array.map (fun y -> int(y * 100.)) x) i)
+    
+let treeId3 = new DecisionTree(decisionVariablesIListInt (inputsInt trainInputs), numClasses (Array.map int trainOutputs))
+
+let id3 = new ID3Learning(treeId3)
+
+id3.ParallelOptions.MaxDegreeOfParallelism <- 1
+let errorId3 = id3.Learn((inputsInt trainInputs), (Array.map int trainOutputs))
+
+let (trainResultsId3, trainTotalCorrectId3) = processResultsId3 treeId3 (inputsInt trainInputs) (Array.map int trainOutputs)    
+let (testResultsId3, testTotalCorrectId3) = processResultsId3 treeId3 (inputsInt testInputs) (Array.map int testOutputs)
+
+showResults "Train" trainTotalCorrectId3 (Array.length trainInputs)
+showResults "Test " testTotalCorrectId3 (Array.length testInputs)
+{% endcodeblock %}
+
+
+Although the end results were anticlimatic, it's nice to see it all come together.  One consolation is with over 100 possible themes, 41% on the test set isn't the worst thing in the world.  Hopefully this has offered some insight into how to use a decision tree in Accord.NET.  Until next time...
+
+
+
 
