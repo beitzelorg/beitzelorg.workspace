@@ -3,8 +3,11 @@ title: 'Edge Filter using F# and Accord.NET'
 date: 2016-11-23 07:56:08
 tags:
 - F#
+- FSharp
 - Accord.NET
 - Images
+- Edges
+- Filters
 ---
 
 This is a sample of how to apply edge filters to a set of images using [F#](http://fsharp.org/) and [Accord.NET](http://accord-framework.net/).  The framework provides several [Filters](http://accord-framework.net/docs/html/N_Accord_Imaging_Filters.htm) for image manipulating.  Since I'm interested in edge enhancement I'll limit my scope to those filters.  In particular I've selected the ```DifferenceEdgeDetector()```.

@@ -3,11 +3,13 @@ title: 'Decision Trees with F# and Accord.NET (Part 2)'
 date: 2016-12-07 22:12:19
 tags:
 - F#
+- FSharp
 - Accord.NET
 - Decision Trees
 - Machine Learning
 - Legos
 - Data
+- Classification
 ---
 
 This is part 2 of my attempt to use an [Accord.NET](http://accord-framework.net/) Decision Tree to classify Lego set themes using [F#](http://fsharp.org/).  Just as a reminder, the original data source is [Rebrickable](http://rebrickable.com/downloads).  You can find [Part 1](/2016/12/05/Decision-Trees-with-F-and-Accord-NET-Part-1) here.
