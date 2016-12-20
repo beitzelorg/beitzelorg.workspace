@@ -97,7 +97,7 @@ let myDtwArray2D_A (d1:float[]) (d2:float[]) =
     path.[n,m]
 {% endcodeblock %}
 
-Here is my first pass.  Again, I ran this multiple times, and this is a representative result. And ouch.  I know functional languages have a reputation for slower performance, but we need to be able to do better.  Not ony is it slower, but the GC #s are 10x worse than my baseline. 
+Here is my first pass.  Again, I ran this multiple times, and this is a representative result. And ouch.  I know functional languages have a reputation for slower performance, but I need to be able to do better.  Not ony is it slower, but the GC #s are 10x worse than my baseline. 
 
 {% codeblock lang:fsharp %}
 let cost = myDtwArray2D_A ibmData fordData
