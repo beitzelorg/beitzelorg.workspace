@@ -17,7 +17,7 @@ tags:
 - Mono
 ---
 
-My recent post about [Dynamic Time Warping](/2016/12/13/F-and-Dynamic-Time-Warping/) used an external library.  It inspired me to implement the algorithm in [F#](http://fsharp.org/).  This is partially just to see it in F#.  But my last implementation was in [Racket](http://racket-lang.org/), I'm also interested in the different language implementations. I use a pretty basic [Algorithm](https://en.wikipedia.org/wiki/Dynamic_time_warping#Implementation). As part of this process I'll be doing comparisons between [NDtw](https://github.com/doblak/ndtw) and my code.  To be upfront, its not a perfect comparison.  NDtw has additional options and tracking that will reduce it's max performance capabilities.  But for hacking around, the implementations will be close enough for alittle fun.  For anyone interested, unless otherwise specified, all of my results will be from the REPL in [VS Code](https://code.visualstudio.com/) + [Ionide](http://ionide.io/) using [Mono](http://www.mono-project.com/) version 4.6.2.
+My recent post about [Dynamic Time Warping](/2016/12/13/F-and-Dynamic-Time-Warping/) used an external library.  It inspired me to implement the algorithm in [F#](http://fsharp.org/).  This is mostly just to see it in F#.  My last implementation was in [Racket](http://racket-lang.org/), and I'm interested in the different language implementations. I use a pretty basic [Algorithm](https://en.wikipedia.org/wiki/Dynamic_time_warping#Implementation), nothing fancy. As part of this process I'll be doing comparisons between [NDtw](https://github.com/doblak/ndtw) and my code.  To be upfront, its not a perfect comparison.  NDtw has additional options and tracking that will reduce it's max performance capabilities.  But for hacking around, the implementations will be close enough for alittle fun.  For anyone interested, unless otherwise specified, all of my results will be from the REPL in [VS Code](https://code.visualstudio.com/) + [Ionide](http://ionide.io/) using [Mono](http://www.mono-project.com/) version 4.6.2.
 
 
 Using [Paket](https://github.com/fsprojects/Paket), here is a sample paket.dependencies file.
@@ -73,7 +73,7 @@ let cost = dtw.GetCost()
 {% endcodeblock %}
 
 
-Now it is time time implement the algorithm.  This is mostly a copy paste directly off of the wikipedia page.  I just need to do minor F# translation.
+Now it is time to implement the algorithm.  This is mostly a copy paste directly off of the wikipedia page.  I just need to do minor F# translation.
 
 {% codeblock lang:fsharp %}
 // Distance calculation between 2 points
@@ -167,7 +167,7 @@ let myDtwArray2DRecursive (d1:float[]) (d2:float[]) =
     myDtwArray2DRecursive' 1 1 n m path d1 d2
 {% endcodeblock %}
 
-This is exciting.  The code is flying now (over a 5x faster).  Also note the GC numbers, it appears this last modification worked like a charm.  This code is even running significantly faster than the NDtw code.  To be fair, I'm not going to read into those numbers too much, my code is supporting less functionality.  The important take away from this is a minor replace of loops for tail call recursion can give a pretty satisifying performance boost.
+This is exciting.  The code is flying now (over 5x faster).  Also note the GC numbers, it appears this last modification worked like a charm.  The code is even running significantly faster than the NDtw code.  To be fair, that isn't an apples to apples comparison, but it is a very encouraging result.  The important take away from this is a minor replace of loops for optimized tail calls can give a pretty satisifying performance boost.
 
 {% codeblock lang:fsharp %}
 let cost = myDtwArray2DRecursion ibmData fordData
@@ -251,7 +251,7 @@ Here are the average/min/max runtimes for each function.  I like to keep an eye 
            Array2D_A  13808.5  13061.0  14632.9
 {% endcodeblock %}
 
-The comparative performance is similar, although NDtw and version B flip flop positions.  Those two seem to run about the same, so that probably has more to do with what's going on my machine at the time.  I did expect faster performance with fsi than fsharpi, so that is a bit of surprise.  It is just a reminder that assumptions should always be tested.  Investigating that further may be worthy of a blog post itself.  This has been an interesting examination into implementing a DTW algorithm.  It turned into more of an optimization exercise than I expected, which was a pleasant turn of events.  I hope this has been useful, and inspired more F# algorithm implementations, more dynamic time warping, and more tail calls! Until next time... 
+The comparative performance is similar, although NDtw and version B flip flop positions.  Those two seem to run about the same, so that probably has more to do with what's going on my machine at the time.  I did expect faster performance with fsi than fsharpi, so that is a bit of surprise.  It is just a reminder that assumptions should always be tested.  Investigating that further may be worthy of a blog post itself.  This has been an interesting examination into implementing a DTW algorithm.  It turned into more of an optimization exercise than I expected, which was a pleasant turn of events.  I hope this has been useful, and inspired more F# algorithm implementations, more dynamic time warping, and more tail calls! 
 
 
 

@@ -12,7 +12,7 @@ tags:
 
 ## In other words: -.-- .- -.-- / ..-. / ... .... .- .-. .--.
 
-As I was explaining [Morse Code](https://en.wikipedia.org/wiki/Morse_code) to a young mind, I started thinking.  It is fine to explain the encoding and uses, but experiencing it makes the lessons stick better.  Enter [F#](http://fsharp.org/).  Yes, I know I could use any of a hundred phone apps or websites that do it, but what's the fun in that?  For me, this is the perfect opportunity to hack out a quick text to morse code translator.  
+As I was explaining [Morse Code](https://en.wikipedia.org/wiki/Morse_code) to a young mind, I started thinking.  It is fine to explain the encoding and uses, but experiencing the audial component makes the lessons stick better.  Enter [F#](http://fsharp.org/).  Yes, I know I could use any of a hundred phone apps or websites that produce sound, but what's the fun in that?  For me, this is the perfect opportunity to hack out a quick text to morse code translator.  
 
 Getting started, I setup a ```Map``` as the codebook for letter/number to morse code translation.  It's not meant to be comprehensive, but enough to play with.  Then I code in some constants and helpers to make my life easier later. 
 
